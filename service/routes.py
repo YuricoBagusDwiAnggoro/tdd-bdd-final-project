@@ -1,4 +1,3 @@
-######################################################################
 # Copyright 2016, 2022 John J. Rofrano. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +13,6 @@
 # limitations under the License.
 ######################################################################
 
-# spell: ignore Rofrano jsonify restx dbname
 """
 Product Store Service with UI
 """
@@ -72,7 +70,7 @@ def check_content_type(content_type):
 def create_products():
     """
     Creates a Product
-    This endpoint will create a Product based the data in the body that is posted
+    This endpoint will create a Product based on the data in the body that is posted
     """
     app.logger.info("Request to Create a Product...")
     check_content_type("application/json")
@@ -86,43 +84,56 @@ def create_products():
 
     message = product.serialize()
 
-    #
     # Uncomment this line of code once you implement READ A PRODUCT
-    #
     # location_url = url_for("get_products", product_id=product.id, _external=True)
     location_url = "/"  # delete once READ is implemented
     return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################
-# L I S T   A L L   P R O D U C T S
-######################################################################
-
-#
-# PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
-#
-
-######################################################################
 # R E A D   A   P R O D U C T
 ######################################################################
+@app.route("/products/<int:product_id>", methods=["GET"])
+def get_products(product_id):
+    """
+    Retrieves a single Product
+    This endpoint will return a Product based on its id
+    """
+    app.logger.info("Request to Retrieve a product with id [%s]", product_id)
+    
+    # Use the Product.find() method to find the product
+    product = Product.find(product_id)
+    
+    # If the product is not found, abort with a 404 error
+    if not product:
+        abort(404, f"Product with id '{product_id}' was not found.")
+    
+    # Return the serialized product with a 200 OK status
+    app.logger.info("Returning product: %s", product.name)
+    return jsonify(product.serialize()), status.HTTP_200_OK
 
-#
-# PLACE YOUR CODE HERE TO READ A PRODUCT
-#
+######################################################################
+# L I S T   A L L   P R O D U C T S
+######################################################################
+@app.route("/products", methods=["GET"])
+def list_all_products():
+    """Lists all Products"""
+    app.logger.info("Request to List all products...")
+    
+    # Get all products using Product.all() method
+    products = Product.all()
+    
+    # Return all products as a serialized list
+    return jsonify([product.serialize() for product in products]), status.HTTP_200_OK
+
 
 ######################################################################
 # U P D A T E   A   P R O D U C T
 ######################################################################
+# Implement the update functionality here if needed
 
-#
-# PLACE YOUR CODE TO UPDATE A PRODUCT HERE
-#
 
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
-
-
-#
-# PLACE YOUR CODE TO DELETE A PRODUCT HERE
-#
+# Implement the delete functionality here if needed

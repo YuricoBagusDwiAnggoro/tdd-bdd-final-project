@@ -44,3 +44,5 @@ def get_firefox():
     options.add_argument("--headless")
     return webdriver.Firefox(options=options)    
     
+def before_scenario(context, scenario):
+    context.data = {}
